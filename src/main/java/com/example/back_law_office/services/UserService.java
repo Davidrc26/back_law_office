@@ -10,6 +10,10 @@ import com.example.back_law_office.dtos.CreateUserDTO;
 import com.example.back_law_office.dtos.UserDTO;
 import com.example.back_law_office.models.User;
 import com.example.back_law_office.repositories.UserRepository;
+import com.example.back_law_office.models.Role;
+import com.example.back_law_office.repositories.RolesRepository;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.util.stream.Collectors;
 
@@ -24,6 +28,9 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private RolesRepository rolesRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -35,9 +42,13 @@ public class UserService {
         user.setUsername(createUserDTO.getUsername());
         user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
         user.setEmail(createUserDTO.getEmail());
-        user.setRole(createUserDTO.getRole());
         user.setPhone(createUserDTO.getPhone());
-
+        if (createUserDTO.getRoleIds() != null && !createUserDTO.getRoleIds().isEmpty()) {
+            Set<Role> roles = new HashSet<>(rolesRepository.findAllById(createUserDTO.getRoleIds()));
+            user.setRoles(roles);
+        } else {
+            user.setRoles(new HashSet<>());
+        }
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDTO.class);
     }
@@ -59,16 +70,20 @@ public class UserService {
 
     // Método para actualizar un usuario existente
     public UserDTO updateUser(Long id, CreateUserDTO userDetails) {
-        User userData = modelMapper.map(userDetails, User.class);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        user.setUsername(userData.getUsername());
+        user.setUsername(userDetails.getUsername());
         if (userDetails.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         }
-        user.setEmail(userData.getEmail());
-        user.setRole(userData.getRole());
-        user.setPhone(userData.getPhone());
+        user.setEmail(userDetails.getEmail());
+        user.setPhone(userDetails.getPhone());
+        if (userDetails.getRoleIds() != null && !userDetails.getRoleIds().isEmpty()) {
+            Set<Role> roles = new HashSet<>(rolesRepository.findAllById(userDetails.getRoleIds()));
+            user.setRoles(roles);
+        } else {
+            user.setRoles(new HashSet<>());
+        }
         User updatedUser = userRepository.save(user);
         return modelMapper.map(updatedUser, UserDTO.class);
 
