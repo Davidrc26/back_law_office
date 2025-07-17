@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/cases")
@@ -44,7 +45,11 @@ public class CaseController {
 
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<CaseDTO> getCaseById(@PathVariable(name = "id") Long id) {
-        CaseDTO result = caseService.getCaseById(id);
-        return ResponseEntity.ok(result);
+        try{
+            CaseDTO result = caseService.getCaseById(id);
+            return ResponseEntity.ok(result);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(null);
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.example.back_law_office.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -10,9 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.crypto.SecretKey;
+
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY = "cambia_esta_clave_secreta";
+    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(System.getenv("JWT_SECRET").getBytes());
     private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
 
     public String extractUsername(String token) {

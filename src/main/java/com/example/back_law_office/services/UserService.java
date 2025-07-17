@@ -53,6 +53,15 @@ public class UserService {
         return modelMapper.map(savedUser, UserDTO.class);
     }
 
+    public User createUserFromGoogle(String username, String email, Set<Role> roles) {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode("123456")); // Contraseña dummy, no se usará
+        user.setRoles(roles);
+        return userRepository.save(user);
+    }
+
     // Método para obtener todos los usuarios
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
