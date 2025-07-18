@@ -32,7 +32,7 @@ public class SecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "api/users/create", "/api/google").permitAll()
+                        .requestMatchers("/api/auth/login", "api/users/create", "/api/auth/google").permitAll()
                         .anyRequest().authenticated())
                 .headers(headers -> headers.frameOptions().disable());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

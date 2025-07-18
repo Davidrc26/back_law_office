@@ -71,11 +71,12 @@ public class AuthController {
     @Transactional
     @PostMapping("/google")
     public ResponseEntity<?> loginWithGoogle(@RequestBody GoogleLoginRequest googleLoginRequest) {
-        String idToken = googleLoginRequest.getIdToken();
+        String idToken = googleLoginRequest.getToken();
         GoogleIdToken.Payload payload;
         try {
             payload = googleTokenVerifier.verify(idToken);
         } catch (Exception e) {
+            System.out.println("Error al verificar el token de Google: " + e.getMessage());
             return ResponseEntity.status(401).body("Token de Google inválido");
         }
         if (payload == null) {
@@ -95,8 +96,8 @@ public class AuthController {
     }
 
     public static class GoogleLoginRequest {
-        private String idToken;
-        public String getIdToken() { return idToken; }
-        public void setIdToken(String idToken) { this.idToken = idToken; }
+        private String token;
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
     }
 }
