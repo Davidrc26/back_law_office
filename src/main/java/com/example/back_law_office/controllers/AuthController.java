@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -46,8 +45,6 @@ public class AuthController {
     @Autowired
     private GoogleTokenVerifier googleTokenVerifier;
 
-    @Autowired
-    private UserService userService;
 
     @Value("${google.clientId:}")
     private String googleClientId;
@@ -55,7 +52,8 @@ public class AuthController {
     @Transactional(readOnly = true)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return ResponseEntity.status(401).body("Usuario o contraseña incorrectos");
@@ -82,12 +80,10 @@ public class AuthController {
         if (payload == null) {
             return ResponseEntity.status(401).body("Token de Google inválido");
         }
+
         String email = payload.getEmail();
-        String name = (String) payload.get("name");
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
-            user = userService.createUserFromGoogle(name, email, Set.of());
-        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
         Set<Role> safeRoles = user.getRoles() == null ? Set.of() : new java.util.HashSet<>(user.getRoles());
         String roles = safeRoles.stream().map(Role::getName).collect(Collectors.joining(","));
         String token = jwtUtil.generateToken(user.getUsername(), roles);
@@ -97,7 +93,13 @@ public class AuthController {
 
     public static class GoogleLoginRequest {
         private String token;
-        public String getToken() { return token; }
-        public void setToken(String token) { this.token = token; }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
     }
 }

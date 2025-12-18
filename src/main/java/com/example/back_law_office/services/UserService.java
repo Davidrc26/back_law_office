@@ -36,7 +36,11 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Método para crear un nuevo usuario
+    /**
+     * Crea un nuevo usuario.
+     * @param createUserDTO DTO con los datos del usuario a crear.
+     * @return El usuario creado.
+     */
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         User user = new User();
         user.setUsername(createUserDTO.getUsername());
@@ -53,16 +57,10 @@ public class UserService {
         return modelMapper.map(savedUser, UserDTO.class);
     }
 
-    public User createUserFromGoogle(String username, String email, Set<Role> roles) {
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode("123456")); // Contraseña dummy, no se usará
-        user.setRoles(roles);
-        return userRepository.save(user);
-    }
-
-    // Método para obtener todos los usuarios
+    /**
+     * Obtiene todos los usuarios.
+     * @return Una lista de usuarios.
+     */
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
@@ -70,14 +68,24 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // Método para obtener un usuario por ID
+    /**
+     * Obtiene un usuario por su ID.
+     * @param id ID del usuario a buscar.
+     * @return El usuario encontrado.
+     * @throws ResponseStatusException si el usuario no se encuentra.
+     */
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         return modelMapper.map(user, UserDTO.class);
     }
 
-    // Método para actualizar un usuario existente
+    /**
+     * Actualiza un usuario existente.
+     * @param id ID del usuario a actualizar.
+     * @param userDetails DTO con los nuevos datos del usuario.
+     * @return El usuario actualizado.
+     */
     public UserDTO updateUser(Long id, CreateUserDTO userDetails) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -97,8 +105,12 @@ public class UserService {
         return modelMapper.map(updatedUser, UserDTO.class);
 
     }
-    // Método para eliminar un usuario por ID
-
+    
+    /**
+     * Elimina un usuario por su ID.
+     * @param id ID del usuario a eliminar.
+     * @throws ResponseStatusException si el usuario no se encuentra.
+     */
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");

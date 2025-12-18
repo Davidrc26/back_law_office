@@ -11,7 +11,7 @@ import com.example.back_law_office.models.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(Long id);
 
-    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.username = :username")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.username = :username")
     Optional<User> findByUsername(@Param("username") String username);
 
     boolean existsByUsername(String username);
