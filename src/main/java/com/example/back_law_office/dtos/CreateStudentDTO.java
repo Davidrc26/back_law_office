@@ -4,8 +4,6 @@ import lombok.Data;
 import java.time.LocalDate;
 @Data
 public class CreateStudentDTO {
-    // Campos comunes de User
-    private CreateUserDTO user;
     private String studentCode;
     private Integer semester;
     private LocalDate enrollmentDate;

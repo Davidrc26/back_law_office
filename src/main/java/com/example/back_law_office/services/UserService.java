@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import com.example.back_law_office.dtos.*;
 import com.example.back_law_office.models.User;
 import com.example.back_law_office.repositories.UserRepository;
+import com.example.back_law_office.models.AssistantProfile;
+import com.example.back_law_office.models.ProfessorProfile;
 import com.example.back_law_office.models.Role;
 import com.example.back_law_office.repositories.RolesRepository;
 import java.util.Set;
@@ -35,6 +37,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private StudentService studentService;
+
     /**
      * Crea un nuevo usuario.
      * @param createUserDTO DTO con los datos del usuario a crear.
@@ -57,7 +62,17 @@ public class UserService {
         } else {
             user.setRoles(new HashSet<>());
         }
+        
         User savedUser = userRepository.save(user);
+
+        if (createUserDTO.getStudentProfile() != null) {
+            studentService.createStudent(createUserDTO.getStudentProfile(), savedUser);
+        }else if (createUserDTO.getProfessorProfile() != null) {
+            user.setProfessorProfile(modelMapper.map(createUserDTO.getProfessorProfile(), ProfessorProfile.class));
+        } else if (createUserDTO.getAssistantProfile() != null) {
+            user.setAssistantProfile(modelMapper.map(createUserDTO.getAssistantProfile(), AssistantProfile.class));
+        }
+
         return modelMapper.map(savedUser, UserDTO.class);
     }
 

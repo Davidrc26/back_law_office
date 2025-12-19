@@ -19,7 +19,7 @@ public class RoleService {
      */
     public List<Role> getAllRoles() {
         List<Role> roles = roleRepository.findAll();
-        return roles.stream().filter(role -> !role.getSpanishName().contains("admin"))
+        return roles.stream()
                 .collect(Collectors.toList());
     }
     

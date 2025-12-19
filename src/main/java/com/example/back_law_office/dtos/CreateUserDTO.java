@@ -14,4 +14,7 @@ public class CreateUserDTO {
     private Long documentTypeId;
     private Set<Long> roleIds;
     private String phone;
+    private CreateStudentDTO studentProfile;
+    private CreateProfessorDTO professorProfile;
+    private CreateAssistantDTO assistantProfile;
 }

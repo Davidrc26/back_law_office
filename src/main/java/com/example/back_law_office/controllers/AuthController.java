@@ -85,7 +85,7 @@ public class AuthController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
         Set<Role> safeRoles = user.getRoles() == null ? Set.of() : new java.util.HashSet<>(user.getRoles());
         String roles = safeRoles.stream().map(Role::getName).collect(Collectors.joining(","));
-        String token = jwtUtil.generateToken(user.getEmail(), roles);
+        String token = jwtUtil.generateToken(user.getUsername(), roles);
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         return ResponseEntity.ok(new JwtResponseDTO(userDTO, token));
     }

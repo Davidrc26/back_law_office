@@ -25,32 +25,20 @@ public class StudentService {
     private ModelMapper modelMapper;
 
 
-    @Autowired
-    private UserService userService;
-
     @Transactional
-    public UserDTO createStudent(CreateStudentDTO dto) {
-        UserDTO userDTO = userService.createUser(dto.getUser());
-        User savedUser = userRepository.findById(userDTO.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating user"));
-
+    public UserDTO createStudent(CreateStudentDTO dto, User user) {
         StudentProfile profile = new StudentProfile();
-        profile.setUser(savedUser);
+        profile.setUser(user);
         profile.setStudentCode(dto.getStudentCode());
         profile.setSemester(dto.getSemester());
         profile.setEnrollmentDate(dto.getEnrollmentDate());
         profile.setUniversity(dto.getUniversity());
-
         studentProfileRepository.save(profile);
-        savedUser.setStudentProfile(profile);
-
-        return convertToUserDTO(savedUser);
+        return convertToUserDTO(profile.getUser());
     }
 
     @Transactional
     public UserDTO updateStudent(Long userId, CreateStudentDTO dto) {
-
-        userService.updateUser(userId, dto.getUser());
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
