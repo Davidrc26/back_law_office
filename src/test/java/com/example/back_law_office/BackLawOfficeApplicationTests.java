@@ -2,7 +2,6 @@ package com.example.back_law_office;
 
 import com.example.back_law_office.dtos.CreateInterviewDTO;
 import com.example.back_law_office.dtos.InterviewDTO;
-import com.example.back_law_office.dtos.ClientDTO;
 import com.example.back_law_office.dtos.CreateClientDTO;
 import com.example.back_law_office.models.Client;
 import com.example.back_law_office.models.Interview;
@@ -18,7 +17,6 @@ import org.modelmapper.ModelMapper;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;

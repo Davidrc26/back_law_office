@@ -30,6 +30,4 @@ public class StudentProfile {
     @Column(name = "university")
     private String university;
     
-    @Column(name = "academic_status")
-    private String academicStatus; // ACTIVE, INACTIVE, GRADUATED
 }

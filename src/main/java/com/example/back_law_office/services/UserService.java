@@ -49,6 +49,7 @@ public class UserService {
         user.setSecondName(createUserDTO.getSecondName());
         user.setSecondLastName(createUserDTO.getSecondLastName());
         user.setDocumentNumber(createUserDTO.getDocumentNumber());
+        user.setDocumentTypeId(createUserDTO.getDocumentTypeId());
         user.setPhone(createUserDTO.getPhone());
         if (createUserDTO.getRoleIds() != null && !createUserDTO.getRoleIds().isEmpty()) {
             Set<Role> roles = new HashSet<>(rolesRepository.findAllById(createUserDTO.getRoleIds()));
@@ -101,6 +102,7 @@ public class UserService {
         user.setSecondName(userDetails.getSecondName());
         user.setSecondLastName(userDetails.getSecondLastName());
         user.setDocumentNumber(userDetails.getDocumentNumber());
+        user.setDocumentTypeId(userDetails.getDocumentTypeId());
         user.setPhone(userDetails.getPhone());
         if (userDetails.getRoleIds() != null && !userDetails.getRoleIds().isEmpty()) {
             Set<Role> roles = new HashSet<>(rolesRepository.findAllById(userDetails.getRoleIds()));
@@ -138,9 +140,7 @@ public class UserService {
         if (user.getProfessorProfile() != null) {
             userDTO.setProfessorProfile(modelMapper.map(user.getProfessorProfile(), ProfessorProfileDTO.class));
         }
-        if (user.getAdministratorProfile() != null) {
-            userDTO.setAdministratorProfile(modelMapper.map(user.getAdministratorProfile(), AdministratorProfileDTO.class));
-        }
+
         if (user.getAssistantProfile() != null) {
             userDTO.setAssistantProfile(modelMapper.map(user.getAssistantProfile(), AssistantProfileDTO.class));
         }

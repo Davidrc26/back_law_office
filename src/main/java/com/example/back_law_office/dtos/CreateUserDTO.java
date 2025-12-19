@@ -11,6 +11,7 @@ public class CreateUserDTO {
     private String secondName;
     private String secondLastName;
     private String documentNumber;
+    private Long documentTypeId;
     private Set<Long> roleIds;
     private String phone;
 }

@@ -15,7 +15,6 @@ import com.example.back_law_office.models.Area;
 import com.example.back_law_office.models.LegalAction;
 import com.example.back_law_office.models.User;
 import com.example.back_law_office.repositories.AreaRepository;
-import com.example.back_law_office.repositories.LegalActionRepository;
 import com.example.back_law_office.repositories.ProcedureRepository;
 import com.example.back_law_office.repositories.UserRepository;
 
@@ -30,8 +29,6 @@ public class NotificationProducer {
     @Autowired
     private ProcedureRepository procedureRepository;
 
-    @Autowired
-    private LegalActionRepository legalActionRepository;
 
     @Autowired
     private AreaRepository areaRepository;

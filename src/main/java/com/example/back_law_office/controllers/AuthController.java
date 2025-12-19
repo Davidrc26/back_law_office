@@ -9,7 +9,6 @@ import com.example.back_law_office.models.User;
 import com.example.back_law_office.dtos.LoginRequestDTO;
 import com.example.back_law_office.dtos.UserDTO;
 import com.example.back_law_office.dtos.JwtResponseDTO;
-import com.example.back_law_office.services.UserService;
 
 import org.springframework.transaction.annotation.Transactional;
 

@@ -35,20 +35,26 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "second_name", nullable = false)
+    @Column(name = "second_name", nullable = true)
     private String secondName;
 
-    @Column(name = "second_last_name", nullable = false)
+    @Column(name = "second_last_name", nullable = true)
     private String secondLastName;
 
     @Column(name = "document_number", nullable = false, unique = true)
     private String documentNumber;
+
+    @Column(name = "document_type_id", nullable = false)
+    private Long documentTypeId;
 
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -73,9 +79,6 @@ public class User {
     @JsonIgnore
     private ProfessorProfile professorProfile;
     
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private AdministratorProfile administratorProfile;
     
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

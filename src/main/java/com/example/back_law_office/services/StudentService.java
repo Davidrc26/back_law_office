@@ -6,13 +6,10 @@ import com.example.back_law_office.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class StudentService {
@@ -23,70 +20,41 @@ public class StudentService {
     @Autowired
     private StudentProfileRepository studentProfileRepository;
 
-    @Autowired
-    private RolesRepository rolesRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
+
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
 
     @Transactional
     public UserDTO createStudent(CreateStudentDTO dto) {
-        // Crear usuario base
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setEmail(dto.getEmail());
-        user.setPhone(dto.getPhone());
+        UserDTO userDTO = userService.createUser(dto.getUser());
+        User savedUser = userRepository.findById(userDTO.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating user"));
 
-        // Asignar roles
-        if (dto.getRoleIds() != null && !dto.getRoleIds().isEmpty()) {
-            Set<Role> roles = new HashSet<>(rolesRepository.findAllById(dto.getRoleIds()));
-            user.setRoles(roles);
-        }
-
-        // Guardar usuario primero
-        User savedUser = userRepository.save(user);
-
-        // Crear perfil de estudiante
         StudentProfile profile = new StudentProfile();
         profile.setUser(savedUser);
         profile.setStudentCode(dto.getStudentCode());
         profile.setSemester(dto.getSemester());
-        profile.setMajor(dto.getMajor());
         profile.setEnrollmentDate(dto.getEnrollmentDate());
         profile.setUniversity(dto.getUniversity());
-        profile.setAcademicStatus(dto.getAcademicStatus());
 
         studentProfileRepository.save(profile);
         savedUser.setStudentProfile(profile);
 
-        // Convertir a DTO
         return convertToUserDTO(savedUser);
     }
 
     @Transactional
     public UserDTO updateStudent(Long userId, CreateStudentDTO dto) {
+
+        userService.updateUser(userId, dto.getUser());
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        // Actualizar datos de usuario
-        user.setUsername(dto.getUsername());
-        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
-        user.setEmail(dto.getEmail());
-        user.setPhone(dto.getPhone());
-
-        // Actualizar roles
-        if (dto.getRoleIds() != null && !dto.getRoleIds().isEmpty()) {
-            Set<Role> roles = new HashSet<>(rolesRepository.findAllById(dto.getRoleIds()));
-            user.setRoles(roles);
-        }
-
-        // Actualizar o crear perfil
         StudentProfile profile = user.getStudentProfile();
         if (profile == null) {
             profile = new StudentProfile();
@@ -94,10 +62,8 @@ public class StudentService {
         }
         profile.setStudentCode(dto.getStudentCode());
         profile.setSemester(dto.getSemester());
-        profile.setMajor(dto.getMajor());
         profile.setEnrollmentDate(dto.getEnrollmentDate());
         profile.setUniversity(dto.getUniversity());
-        profile.setAcademicStatus(dto.getAcademicStatus());
 
         studentProfileRepository.save(profile);
         user.setStudentProfile(profile);
