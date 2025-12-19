@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 
-import com.example.back_law_office.dtos.CreateUserDTO;
-import com.example.back_law_office.dtos.UserDTO;
+import com.example.back_law_office.dtos.*;
 import com.example.back_law_office.models.User;
 import com.example.back_law_office.repositories.UserRepository;
 import com.example.back_law_office.models.Role;
@@ -64,7 +63,7 @@ public class UserService {
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map(user -> modelMapper.map(user, UserDTO.class))
+                .map(this::convertToUserDTO)
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +76,7 @@ public class UserService {
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return modelMapper.map(user, UserDTO.class);
+        return convertToUserDTO(user);
     }
 
     /**
@@ -118,5 +117,27 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    /**
+     * Convierte un User a UserDTO incluyendo los perfiles específicos
+     */
+    private UserDTO convertToUserDTO(User user) {
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        
+        // Mapear perfiles específicos si existen
+        if (user.getStudentProfile() != null) {
+            userDTO.setStudentProfile(modelMapper.map(user.getStudentProfile(), StudentProfileDTO.class));
+        }
+        if (user.getProfessorProfile() != null) {
+            userDTO.setProfessorProfile(modelMapper.map(user.getProfessorProfile(), ProfessorProfileDTO.class));
+        }
+        if (user.getAdministratorProfile() != null) {
+            userDTO.setAdministratorProfile(modelMapper.map(user.getAdministratorProfile(), AdministratorProfileDTO.class));
+        }
+        if (user.getAssistantProfile() != null) {
+            userDTO.setAssistantProfile(modelMapper.map(user.getAssistantProfile(), AssistantProfileDTO.class));
+        }
+        
+        return userDTO;
+    }
     
 }
