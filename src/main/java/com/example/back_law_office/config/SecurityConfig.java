@@ -35,6 +35,30 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "api/users/create", "/api/auth/google").permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.setStatus(401);
+                            response.getWriter().write(
+                                "{\"timestamp\":\"" + java.time.LocalDateTime.now() + "\"," +
+                                "\"status\":401," +
+                                "\"error\":\"Unauthorized\"," +
+                                "\"message\":\"Token no válido o expirado\"," +
+                                "\"path\":\"" + request.getRequestURI() + "\"}"
+                            );
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.setStatus(403);
+                            response.getWriter().write(
+                                "{\"timestamp\":\"" + java.time.LocalDateTime.now() + "\"," +
+                                "\"status\":403," +
+                                "\"error\":\"Forbidden\"," +
+                                "\"message\":\"No tienes permisos para acceder a este recurso\"," +
+                                "\"path\":\"" + request.getRequestURI() + "\"}"
+                            );
+                        })
+                )
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

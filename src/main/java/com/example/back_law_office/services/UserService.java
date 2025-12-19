@@ -9,6 +9,9 @@ import org.modelmapper.ModelMapper;
 import com.example.back_law_office.dtos.*;
 import com.example.back_law_office.models.User;
 import com.example.back_law_office.repositories.UserRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.example.back_law_office.models.AssistantProfile;
 import com.example.back_law_office.models.ProfessorProfile;
 import com.example.back_law_office.models.Role;
@@ -45,6 +48,7 @@ public class UserService {
      * @param createUserDTO DTO con los datos del usuario a crear.
      * @return El usuario creado.
      */
+    @Transactional
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         User user = new User();
         user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
@@ -56,6 +60,7 @@ public class UserService {
         user.setDocumentNumber(createUserDTO.getDocumentNumber());
         user.setDocumentTypeId(createUserDTO.getDocumentTypeId());
         user.setPhone(createUserDTO.getPhone());
+        user.setUsername(createUserDTO.getUsername());
         if (createUserDTO.getRoleIds() != null && !createUserDTO.getRoleIds().isEmpty()) {
             Set<Role> roles = new HashSet<>(rolesRepository.findAllById(createUserDTO.getRoleIds()));
             user.setRoles(roles);

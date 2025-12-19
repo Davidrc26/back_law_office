@@ -25,7 +25,6 @@ public class StudentService {
     private ModelMapper modelMapper;
 
 
-    @Transactional
     public UserDTO createStudent(CreateStudentDTO dto, User user) {
         StudentProfile profile = new StudentProfile();
         profile.setUser(user);
