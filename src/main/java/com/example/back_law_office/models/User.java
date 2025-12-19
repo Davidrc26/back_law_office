@@ -10,6 +10,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 import java.util.Set;
 
@@ -61,6 +63,24 @@ public class User {
 
     @Column(name = "phone")
     private String phone;
+    
+    // Relaciones con perfiles específicos
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private StudentProfile studentProfile;
+    
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private ProfessorProfile professorProfile;
+    
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private AdministratorProfile administratorProfile;
+    
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private AssistantProfile assistantProfile;
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
