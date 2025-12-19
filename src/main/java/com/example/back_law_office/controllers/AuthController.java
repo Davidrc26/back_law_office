@@ -52,7 +52,7 @@ public class AuthController {
     @Transactional(readOnly = true)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername())
+        User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
@@ -62,7 +62,7 @@ public class AuthController {
         String roles = safeRoles.stream()
                 .map(r -> r.getName())
                 .collect(Collectors.joining(","));
-        String token = jwtUtil.generateToken(user.getUsername(), roles);
+        String token = jwtUtil.generateToken(user.getEmail(), roles);
         return ResponseEntity.ok(new JwtResponseDTO(modelMapper.map(user, UserDTO.class), token));
     }
 
@@ -86,7 +86,7 @@ public class AuthController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
         Set<Role> safeRoles = user.getRoles() == null ? Set.of() : new java.util.HashSet<>(user.getRoles());
         String roles = safeRoles.stream().map(Role::getName).collect(Collectors.joining(","));
-        String token = jwtUtil.generateToken(user.getUsername(), roles);
+        String token = jwtUtil.generateToken(user.getEmail(), roles);
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         return ResponseEntity.ok(new JwtResponseDTO(userDTO, token));
     }

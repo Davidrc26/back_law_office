@@ -43,9 +43,13 @@ public class UserService {
      */
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         User user = new User();
-        user.setUsername(createUserDTO.getUsername());
         user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
         user.setEmail(createUserDTO.getEmail());
+        user.setFirstName(createUserDTO.getFirstName());
+        user.setLastName(createUserDTO.getLastName());
+        user.setSecondName(createUserDTO.getSecondName());
+        user.setSecondLastName(createUserDTO.getSecondLastName());
+        user.setDocumentNumber(createUserDTO.getDocumentNumber());
         user.setPhone(createUserDTO.getPhone());
         if (createUserDTO.getRoleIds() != null && !createUserDTO.getRoleIds().isEmpty()) {
             Set<Role> roles = new HashSet<>(rolesRepository.findAllById(createUserDTO.getRoleIds()));
@@ -89,11 +93,15 @@ public class UserService {
     public UserDTO updateUser(Long id, CreateUserDTO userDetails) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        user.setUsername(userDetails.getUsername());
         if (userDetails.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         }
         user.setEmail(userDetails.getEmail());
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setSecondName(userDetails.getSecondName());
+        user.setSecondLastName(userDetails.getSecondLastName());
+        user.setDocumentNumber(userDetails.getDocumentNumber());
         user.setPhone(userDetails.getPhone());
         if (userDetails.getRoleIds() != null && !userDetails.getRoleIds().isEmpty()) {
             Set<Role> roles = new HashSet<>(rolesRepository.findAllById(userDetails.getRoleIds()));
